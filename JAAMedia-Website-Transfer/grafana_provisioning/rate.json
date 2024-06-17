@@ -1,0 +1,313 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.2-cloud.1.94a6f396",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "import \"experimental/aggregate\"\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"${metric}\")\n // |> group(columns: [\"url\"])\n//  |> aggregate.rate(\n  //      every: 15m,\n    //    unit: 1m,\n      //  groupColumns: [\"url\", \"voice_id\"],\n    //)\n  |> derivative(unit: 1m, nonNegative: true)\n   |> group(columns: [\"${compare_property}\"])\n\n// |> group(columns: [\"_time\"], mode:\"by\")\n\n  //|> mean()\n  |> aggregateWindow(every: 20m, fn: mean, createEmpty: false)\n  //|> rename(columns: {_value: \"Total views across all accounts and videos\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "Derivative (growth at each instant)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "import \"experimental/aggregate\"\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"${metric}\")\n\n   |> group(columns: [\"${compare_property}\"])\n\n// |> group(columns: [\"_time\"], mode:\"by\")\n\n  //|> mean()\n  |> aggregateWindow(every: 20m, fn: max, createEmpty: false)\n  //|> rename(columns: {_value: \"Total views across all accounts and videos\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "Total views (of the most viewed video)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "url",
+          "value": "url"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Which property to compare",
+        "multi": false,
+        "name": "compare_property",
+        "options": [
+          {
+            "selected": false,
+            "text": "voice_id",
+            "value": "voice_id"
+          },
+          {
+            "selected": false,
+            "text": "writer_id",
+            "value": "writer_id"
+          },
+          {
+            "selected": false,
+            "text": "sponsor_id",
+            "value": "sponsor_id"
+          },
+          {
+            "selected": false,
+            "text": "platform",
+            "value": "platform"
+          },
+          {
+            "selected": false,
+            "text": "username",
+            "value": "username"
+          },
+          {
+            "selected": false,
+            "text": "source_id",
+            "value": "source_id"
+          },
+          {
+            "selected": false,
+            "text": "audio_id",
+            "value": "audio_id"
+          },
+          {
+            "selected": true,
+            "text": "url",
+            "value": "url"
+          }
+        ],
+        "query": "voice_id, writer_id, sponsor_id, platform, username, source_id, audio_id, url",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "views",
+          "value": "views"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Metric to view",
+        "multi": false,
+        "name": "metric",
+        "options": [
+          {
+            "selected": true,
+            "text": "views",
+            "value": "views"
+          },
+          {
+            "selected": false,
+            "text": "likes",
+            "value": "likes"
+          },
+          {
+            "selected": false,
+            "text": "comments",
+            "value": "comments"
+          }
+        ],
+        "query": "views, likes, comments",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Comparison",
+  "uid": "compare",
+  "version": 1,
+  "weekStart": ""
+}

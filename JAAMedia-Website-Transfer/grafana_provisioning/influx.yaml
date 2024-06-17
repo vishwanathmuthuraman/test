@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    uid: influx
+    type: influxdb
+    access: proxy
+    url: https://35.208.72.186:8086/
+    jsonData:
+      version: Flux
+      organization: jaamedia
+      defaultBucket: views
+      tlsSkipVerify: true
+    secureJsonData:
+      token: yGZqwXepRMXEF9KtSEiP5yyX8YKH-2NpF04JhpOML7m6kke8-K4HJKfZkxVJrpbccAwk-49sKv_bw3NbQMN4aw==

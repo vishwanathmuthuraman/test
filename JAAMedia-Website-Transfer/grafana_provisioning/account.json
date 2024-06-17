@@ -1,0 +1,210 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 7,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "from(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"views\")\n  |> filter(fn: (r) => r[\"platform\"] == \"${platform}\")\n  |> filter(fn: (r) => r[\"username\"] == \"${username}\")\n\n // |> drop(columns: [\"strategy_id\"])\n // |>keep(columns: [\"_time\", \"url\", \"revenue\", \"account_pay\", \"writer_pay\", \"_value\"])\n  |> group(columns: [\"url\"])\n\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n  |> group()\n\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n//    |> map(fn: (r) => ({r with _value: r.revenue - r.writer_pay - r.account_pay}))\n |> keep(columns: [\"_time\", \"url\", \"_value\"])\n\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total views",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "from(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"views\")\n  |> filter(fn: (r) => r[\"platform\"] == \"${platform}\")\n  |> filter(fn: (r) => r[\"username\"] == \"${username}\")\n\n // |> drop(columns: [\"strategy_id\"])\n // |>keep(columns: [\"_time\", \"url\", \"revenue\", \"account_pay\", \"writer_pay\", \"_value\"])\n  |> group(columns: [\"url\"])\n\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n // |> group()\n\n//  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n//    |> map(fn: (r) => ({r with _value: r.revenue - r.writer_pay - r.account_pay}))\n |> keep(columns: [\"_time\", \"url\", \"_value\"])\n\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Breakdown by video",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "hide": 2,
+        "name": "username",
+        "query": "",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "hide": 2,
+        "name": "platform",
+        "query": "",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-2d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Account",
+  "uid": "account",
+  "version": 2,
+  "weekStart": ""
+}

@@ -1,0 +1,18 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 98vh;
+            border: 100%;
+        }
+    </style>
+    <h1>Retention Rate Data</h1>
+    <div style="display:flex;flex-direction: column">
+        <iframe src="/grafana/d/admin_retention"></iframe>
+    </div>
+
+{{end}}

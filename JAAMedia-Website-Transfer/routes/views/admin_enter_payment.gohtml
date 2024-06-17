@@ -1,0 +1,33 @@
+{{define "content"}}
+    <h1>Enter Sponsor Payment</h1>
+    <form action="/admin/enter_payment_post">
+        <label>
+            Sponsor:
+            <select name="sponsor_id">
+                {{range .InnerData.Sponsors}}
+                    <option value="{{.Id}}">{{.Name}} (ID: {{.Id}})</option>
+                {{end}}
+            </select>
+        </label>
+        <label>
+            Date:
+            <input type="date" name="date">
+        </label>
+        <fieldset>
+            <legend>
+                Amount:
+            </legend>
+            <div>
+                <input type="number" name="amount_dollars" placeholder="$"/>
+                .
+                <input type="number" name="amount_cents" placeholder="Cents"/>
+            </div>
+
+        </fieldset>
+        <label>
+            Details:
+            <textarea name="details"></textarea>
+        </label>
+        <button type="submit">Submit</button>
+    </form>
+{{end}}

@@ -1,0 +1,1019 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"revenue\")\n    |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n//  |> filter(fn: (r) => r[\"url\"] == \"${url}\")\n  |>drop(columns: [\"strategy_id\"])\n  |>group(columns: [\"url\"])\n// |> sum()\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n   |> group()\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Revenue total",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"account_pay\")\n    |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n//  |> filter(fn: (r) => r[\"url\"] == \"${url}\")\n  |>drop(columns: [\"strategy_id\"])\n  |>group(columns: [\"url\"])\n// |> sum()\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n   |> group()\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Account payments total",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Value$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"writer_pay\")\n    |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n//  |> filter(fn: (r) => r[\"url\"] == \"${url}\")\n  |>drop(columns: [\"strategy_id\"])\n  |>group(columns: [\"url\"])\n// |> sum()\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n   |> group()\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Writer payments total",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 3
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"revenue\")\n    |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n//  |> filter(fn: (r) => r[\"url\"] == \"${url}\")\n  |>drop(columns: [\"strategy_id\"])\n  |>group(columns: [\"url\"])\n// |> sum()\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n   |> group()\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Revenue total",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 3
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"account_pay\")\n    |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n//  |> filter(fn: (r) => r[\"url\"] == \"${url}\")\n  |>drop(columns: [\"strategy_id\"])\n  |>group(columns: [\"url\"])\n// |> sum()\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n   |> group()\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Account payments total",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 3
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"writer_pay\")\n    |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n//  |> filter(fn: (r) => r[\"url\"] == \"${url}\")\n  |>drop(columns: [\"strategy_id\"])\n  |>group(columns: [\"url\"])\n// |> sum()\n  |> aggregateWindow(every: 50m, fn: max, createEmpty: false)\n   |> group()\n  |> aggregateWindow(every: 50m, fn: sum, createEmpty: false)\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Writer payments total",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sponsor_id"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": [
+            "Amount"
+          ],
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "// import \"experimental/aggregate\"\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"revenue\")\n  |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n |> group(columns: [\"url\"])\n |> last()\n |> group(columns: [\"sponsor_id\"])\n\n    |> sum()\n   |> group()\n  |> rename(columns: {_value: \"Amount\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "Sponsor Revenue Breakdown",
+      "transformations": [],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": [
+            "Amount"
+          ],
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "// import \"experimental/aggregate\"\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"account_pay\")\n  |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n  // |> derivative(unit: 1m, nonNegative: true)\n |> group(columns: [\"url\"])\n|> last()\n |> group(columns: [\"username\"])\n\n  //  |> aggregateWindow(every: 20m, fn: mean, createEmpty: false)\n    |> sum()\n   |> group()\n   //|> keep(columns: [\"username\", \"_value\"])\n  |> rename(columns: {_value: \"Amount\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "Account cost breakdown",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "writer_id"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 9
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": [
+            "Amount"
+          ],
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influx"
+          },
+          "query": "// import \"experimental/aggregate\"\n\nfrom(bucket: \"views\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"views\")\n  |> filter(fn: (r) => r[\"_field\"] == \"writer_pay\")\n  |> filter(fn: (r) => contains(set: ${writer:json},value: r[\"writer_id\"]))\n    |> filter(fn: (r) => contains(set: ${sponsor:json},value: r[\"sponsor_id\"]))\n    |> filter(fn: (r) => contains(set: ${platform:json},value: r[\"platform\"]))\n    |> filter(fn: (r) => contains(set: ${account:json},value: r[\"username\"]))\n |> group(columns: [\"url\"])\n |> last()\n |> group(columns: [\"writer_id\"])\n\n    |> sum()\n   |> group()\n  |> rename(columns: {_value: \"Amount\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "Writer cost breakdown",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "pg"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Amount $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "custom.width",
+                "value": 237
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sponsor ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 176
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sponsor Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 220
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": [
+            "amount"
+          ],
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "pg"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT date, sponsor.name as \"Sponsor Name\",  amount, details from sponsor_payment join sponsor on sponsor_payment.sponsor_id = sponsor.id",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Received Sponsor Payments",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Amount $",
+            "binary": {
+              "left": "amount",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "100"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "details"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "Test writer"
+          ],
+          "value": [
+            "1"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "pg"
+        },
+        "definition": "SELECT id AS __value, name AS __text FROM writer",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Writer",
+        "multi": true,
+        "name": "writer",
+        "options": [],
+        "query": "SELECT id AS __value, name AS __text FROM writer",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "pg"
+        },
+        "definition": "SELECT id AS __value, name AS __text FROM sponsor",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Sponsor",
+        "multi": true,
+        "name": "sponsor",
+        "options": [],
+        "query": "SELECT id AS __value, name AS __text FROM sponsor",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "pg"
+        },
+        "definition": "SELECT platform FROM account",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Platform",
+        "multi": true,
+        "name": "platform",
+        "options": [],
+        "query": "SELECT platform FROM account",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "reddit.guy"
+          ],
+          "value": [
+            "reddit.guy"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "pg"
+        },
+        "definition": "SELECT username FROM account",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Account",
+        "multi": true,
+        "name": "account",
+        "options": [],
+        "query": "SELECT username FROM account",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Finances",
+  "uid": "finances",
+  "version": 1,
+  "weekStart": ""
+}

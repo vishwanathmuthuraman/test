@@ -1,0 +1,52 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+    <h1>Enter Creativity</h1>
+        <form action="/admin/creativity" method="GET">
+            <label>
+                Number of days to show:
+                <input type="number" name="n_days" style="width: unset" placeholder="Number of days">
+
+            </label>
+            <button type="submit" style="width: unset">Go</button>
+        </form>
+        <form action="/admin/creativity_post">
+            <table style="text-align: right; width: 100%; overflow-x: scroll">
+                <thead>
+                <tr>
+                    <th></th>
+                    {{range $day := .InnerData.Days}}
+                        <th>{{$day.Format "01/02"}}</th>
+                    {{end}}
+                </tr>
+                </thead>
+                {{$prefill := .InnerData.Prefill}}
+                {{$days := .InnerData.Days}}
+                {{range $account := .InnerData.Accounts}}
+                    <tr>
+                        <th>{{$account.Platform }} / {{ $account.Username}}</th>
+                        {{range $day := $days}}
+                            <td>
+                                <input name="{{$account.Id}}_{{$day.Format "2006-01-02"}}" type="number" placeholder="$" value={{(index $prefill (printf "%d_%s" $account.Id ($day.Format "2006-01-02"))).HtmlValue}}>
+                            </td>
+                        {{end}}
+                    </tr>
+                {{end}}
+            </table>
+            <button type="submit">Submit</button>
+
+        </form>
+{{end}}

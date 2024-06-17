@@ -1,0 +1,165 @@
+{{define "base"}}
+    <html lang="en">
+    <head>
+        <link rel="stylesheet" href="/stylesheet">
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0"/>
+        <title></title>
+        <style>
+            ul li {
+                padding: 10px;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+            }
+        </style>
+        <style>
+            #nav-sidebar a.active {
+                color: black;
+                background-color: var(--secondary-bg);
+                border-left: 3px solid var(--borders);
+            }
+
+            #nav-sidebar {
+                /*max-height: 100%;*/
+                overflow-y: scroll;
+            }
+
+            #nav-sidebar a {
+                width: 100%;
+                display: block;
+                padding: 10px;
+                box-sizing: border-box;
+                text-decoration: none;
+            }
+
+            #nav-sidebar li {
+                padding: 0;
+            }
+
+            #nav-sidebar hr {
+                margin-left: 10px;
+                margin-right: 10px;
+                /*border: 1px solid #383838;*/
+                border-radius: 1px;
+            }
+
+            tr, td {
+                margin: 0;
+                padding: 0px 5px;
+                border: 1px solid lightgray;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+        </style>
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+    </head>
+    <body>
+    <div class="page-container">
+        {{/*        <a href="/" style="grid-row: 2;grid-column: 1; background: white">*/}}
+
+        {{/*        </a>*/}}
+        {{/*        <div >*/}}
+        <div class="navbar" style="padding: 1rem">
+            <button onclick="document.querySelector('#nav-sidebar').classList.toggle('shown'); document.querySelector('#main-content').classList.toggle('hidden')">
+                <span class="material-symbols-outlined" style="font-size: medium">menu</span>
+            </button>
+        </div>
+        <ul id="nav-sidebar" style="background: white">
+
+            <img src="/logo" alt="logo"
+                 style="background: white; width: 100%;"/>
+            {{range $k, $v := .Navigation}}
+                <li>
+                    <hr>
+                    <a style="background: none !important; border:none !important; font-variant: all-small-caps">{{$k}}</a>
+                </li>
+                {{range $v}}
+                    <li>
+                        <a href="{{.Path}}">{{.Name}}</a>
+                    </li>
+                {{end}}
+            {{end}}
+        </ul>
+        {{/*        </div>*/}}
+        <div id="main-content" style="max-height: 100vh; overflow: scroll; padding: 20px;">
+            <div style=" max-width: 100%; padding-bottom: 10px">
+                <div style="box-shadow: 0px 3px 4px rgba(0,0,0,0.1); border-radius: 10px; z-index: 3; background: rgba(0,255,0,0.5); text-align: center;"
+                     id="status-good"></div>
+                <div style="box-shadow: 0px 3px 4px rgba(0,0,0,0.1); border-radius: 10px; z-index: 3; background: rgba(255,0,0,0.2); text-align: center;"
+                     id="status-bad"></div>
+            </div>
+            {{ template "content" .}}
+
+        </div>
+        <script>
+            document.querySelectorAll("#nav-sidebar a").forEach((a) => {
+                if (window.location.href.includes(a.href)) {
+                    a.classList.add("active")
+                }
+            })
+        </script>
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const uiStatusGood = urlParams.get('ui_status');
+            if (uiStatusGood != null) {
+                document.querySelector("#status-good").innerHTML = uiStatusGood
+                document.querySelector("#status-good").style.padding = "10px"
+            }
+            const uiStatusBad = urlParams.get('ui_error');
+            if (uiStatusBad != null) {
+                document.querySelector("#status-bad").innerHTML = uiStatusBad
+                document.querySelector("#status-bad").style.padding = "10px"
+            }
+            //
+            // urlParams.delete('ui_status')
+            // urlParams.delete('ui_error')
+            //
+            // let newLocation = window.location
+            // newLocation.search = urlParams.toString()
+            // window.history.replaceState({}, null, newLocation);
+
+        </script>
+    </div>
+    </body>
+    </html>
+{{end}}
+
+
+{{define "video_card"}}
+    {{$video := .}}
+    <div style="display: flex; flex-direction: column">
+        <div style="display: grid;grid-template-columns: 1fr;grid-template-rows: 1fr; border-radius: 10px">
+            <div style="grid-area: 1/1;width: 100%; height: 250px; background: var(--borders); background-image: url('{{$video.Preview}}'); background-size: cover; background-repeat: no-repeat; border-radius: 10px"></div>
+
+            <div style="grid-area: 1/1; padding: 10px; display: flex;flex-direction:column;justify-content: end; color: white; background: linear-gradient(0deg, rgba(0,0,0,0.9) 6%, rgba(0,0,0,0.85) 14%, rgba(0,0,0,0) 100%); border-radius: 10px">
+                <div style="display:flex;flex-direction: row;align-items: center; gap: 5px">
+                    <span class="material-symbols-outlined" style="font-size: medium">visibility</span>
+                    {{format $video.ViewCount.Int64}}
+
+                </div>
+                <div style="display:flex;flex-direction: row;align-items: center; gap: 5px">
+                    <span class="material-symbols-outlined" style="font-size: medium">favorite</span>
+                    {{format $video.LikeCount.Int64}}
+
+                </div>
+                <div style="display:flex;flex-direction: row;align-items: center; gap: 5px">
+                    <span class="material-symbols-outlined" style="font-size: medium">chat_bubble</span>
+                    {{format $video.CommentCount.Int64}}
+
+                </div>
+            </div>
+        </div>
+        <a href="/admin/account_details?account_id={{$video.Account.Id}}">{{$video.Account.Username}}</a>
+        <a href="/admin/sponsor_details?sponsor_id={{$video.Sponsor.Id}}">{{$video.Sponsor.Name}}</a>
+        <span>{{$video.PostedDate.Time.Format "2006-01-02"}}</span>
+
+        <a href="/video_details?id={{$video.Id}}"
+           class="button">Details</a>
+        <a href="{{$video.Url}}" class="button-secondary">View on TikTok</a>
+    </div>
+{{end}}

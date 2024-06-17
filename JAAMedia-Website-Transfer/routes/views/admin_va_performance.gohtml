@@ -1,0 +1,36 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <h1>{{.Va.Name}}: Videos Entered</h1>
+
+    <table style="text-align: left; width: 100%;">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Videos entered</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        {{range $video := .Videos}}
+            <tr>
+                <td>{{$video.Name}}</td>
+                <td>
+                    <a href="mailto:{{$va.Email}}">{{$va.Email}}</a>
+                </td>
+                <td>
+                    <a href="/admin/va_videos?id={{$va.Id}}">
+                        {{$va.VideosEntered}}
+                        (Details)
+                    </a>
+                </td>
+                <td>
+                    <button onclick="let newPw = prompt('Enter a new password for {{$va.Name}}'); window.location = '/admin/change_va_pw?pw=+'+newPw+'&id={{$va.Id}}'">Change password</button>
+                </td>
+            </tr>
+        {{end}}
+    </table>
+{{end}}

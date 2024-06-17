@@ -1,0 +1,68 @@
+{{define "content"}}
+    <style>
+
+        .hidden {
+            display: none;
+        }
+
+        .shown {
+            display: block;
+        }
+
+        html, body {
+            /*background: black;*/
+            /*color: greenyellow;*/
+        }
+
+        fieldset {
+            border-radius: 10px;
+            /*grid-area: 1 / 1 / 1 / 1;*/
+            font-size: small;
+        }
+
+        legend {
+            font-size: large;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .section {
+            width: min(100%, 500px);
+
+        }
+
+    </style>
+    <div class="card-wrapper">
+
+        <form style="max-width: min(500px, 50%); max-height: min(500px, 50%)" method="POST" action="/va/login_post" class="card">
+            <h1>VA Log in</h1>
+            <input name="redirect" value="{{.InnerData.Redirect}}" hidden>
+            <input name="email" placeholder="E-mail">
+            <input name="pw" type="password" placeholder="Password">
+            <button type="submit">Log in</button>
+            <a href="javascript:alert('Please contact us if you have forgotten your login')">Forgot password?</a>
+
+        </form>
+    </div>
+
+
+{{end}}
+
+{{define "nav"}}
+    <ul>
+        <li>
+            <a href="javascript:history.back()">&leftarrow; Back</a>
+        </li>
+
+    </ul>
+
+{{end}}
+
+

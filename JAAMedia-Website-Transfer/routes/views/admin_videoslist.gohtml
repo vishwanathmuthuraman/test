@@ -1,0 +1,189 @@
+{{define "content"}}
+    <style>
+        /*input, select, option {*/
+        /*    width: unset !important;*/
+        /*}*/
+
+    </style>
+    <h1>Latest Videos</h1>
+    <form class="videoslist-layout">
+        <fieldset style="display:flex;flex-direction: column; gap: 10px;">
+            <label>
+                <input type="checkbox" name="sponsored_only" {{if .InnerData.QuerySponsorOnly}}checked{{end}}></input>
+                Sponsored Only
+            </label>
+            <label>
+                <input type="checkbox" name="non_sponsored_only" {{if .InnerData.QueryNonSponsorOnly}}checked{{end}}></input>
+                Non-Sponsored Only
+            </label>
+            <label>
+                <input type="checkbox" name="needs_entry" {{if .InnerData.QueryNeedsEntryOnly}}checked{{end}}></input>
+                Needs Entry
+            </label>
+            <legend>
+                Filter
+            </legend>
+            <label>
+                URL (exact match):
+                <input type="text" name="url" placeholder="Video URL" value="{{.InnerData.QueryUrl}}">
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Account:
+                <select name="account_id">
+                    <option value="">[ALL]</option>
+                    {{$queryAccount := .InnerData.QueryAccount}}
+
+                    {{range $account := .InnerData.Accounts}}
+                        <option value="{{$account.Id}}"
+                                {{if eq $account.Id $queryAccount}}selected{{end}}> {{$account.Platform}} / {{$account.Username}}
+                            </option>
+                    {{end}}
+                </select>
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Sponsor:
+                <select name="sponsor_id">
+                    <option value="">[ALL]</option>
+                    {{$querySponsor := .InnerData.QuerySponsor}}
+                    {{range $sponsor := .InnerData.Sponsors}}
+                        <option value="{{$sponsor.Id}}"
+                                {{if eq $sponsor.Id $querySponsor}}selected{{end}}> {{$sponsor.Name}} </option>
+                    {{end}}
+                </select>
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Posted after:
+                <input type="date" name="date_after" {{if .InnerData.QueryAfter.Valid }} value="{{.InnerData.QueryAfter.Value.Format "2006-01-02"}}"{{end}}>
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Posted before:
+                <input type="date" name="date_before" {{if .InnerData.QueryBefore.Valid }} value="{{.InnerData.QueryBefore.Value.Format "2006-01-02"}}"{{end}}>
+            </label>
+            <label>
+                Minimum views:
+                <input type="number" name="min_views" value="{{.InnerData.QueryMinViews}}">
+            </label>
+            <label>
+                Minimum likes:
+                <input type="number" name="min_likes" value="{{.InnerData.QueryMinLikes}}">
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Grid View:
+                <input type="checkbox" name="grid"
+                        {{if .InnerData.Grid}}
+                            checked
+                        {{end}}
+                >
+            </label>
+            <label>
+                Sort By:
+                <select name="sort">
+                    <option value="date_desc"
+                    {{if eq .InnerData.QuerySort "date_desc"}}
+                        selected
+                    {{end}}
+                    >Date posted (Descending)</option>
+                    <option value="date_asc"
+                            {{if eq .InnerData.QuerySort "date_asc"}}
+                                selected
+                            {{end}}
+                    >Date posted (Ascending)</option>
+                    <option value="views_desc"
+                            {{if eq .InnerData.QuerySort "views_desc"}}
+                                selected
+                            {{end}}
+                    >Total Views (Descending)</option>
+                    <option value="views_asc"
+                            {{if eq .InnerData.QuerySort "views_asc"}}
+                                selected
+                            {{end}}
+                    >Total Views (Ascending)</option>
+                    <option value="like_rate_desc"
+                            {{if eq .InnerData.QuerySort "like_rate_desc"}}
+                                selected
+                            {{end}}
+                    >Like Rate (Descending)</option>
+                    <option value="like_rate_asc"
+                            {{if eq .InnerData.QuerySort "like_rate_asc"}}
+                                selected
+                            {{end}}
+                    >Like Rate (Ascending)</option>
+                    <option value="comment_rate_desc"
+                            {{if eq .InnerData.QuerySort "comment_rate_desc"}}
+                                selected
+                            {{end}}
+                    >Comment Rate (Descending)</option>
+                    <option value="comment_rate_asc"
+                            {{if eq .InnerData.QuerySort "comment_rate_asc"}}
+                                selected
+                            {{end}}
+                    >Comment Rate (Ascending)</option>
+                </select>
+            </label>
+            <button type="submit" style="width: 100%">New Search</button>
+        </fieldset>
+
+        <div style="overflow-x: scroll">
+            {{if .InnerData.Grid}}
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px">
+                    {{range $video := .InnerData.Results}}
+                        {{template "video_card" $video}}
+                    {{end}}
+                </div>
+            {{else}}
+                <button type="submit" formtarget="_blank" formaction="/export_videos">Export Selected</button>
+                <table style="width: 1fr; overflow-x: scroll">
+                    <thead>
+                    <tr>
+                        <th><button type="button" onclick="[].forEach.call(document.querySelectorAll(`input[name=export_url]`), (e) => e.checked = true)">Select All</button></th>
+                        <th>Details</th>
+                        <th style="resize: both; overflow: auto; display: block">URL</th>
+                        <th>Account</th>
+                        <th>Sponsor</th>
+                        <th>Posted</th>
+                        <th>Needs Entry</th>
+                        <th>Views</th>
+                        <th>Likes</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range $video := .InnerData.Results}}
+                        <tr style="{{if $video.Error.Valid}}background-color: rgba(255,0,0,0.3){{else}}{{end}}">
+                            <td><input type="checkbox" name="export_url" value="{{$video.Url}}"></td>
+                            <td><a href="/video_details?id={{$video.Id}}" class="button">Details</a></td>
+                            <td><a href="{{$video.Url}}">{{$video.Account.Platform}}</a></td>
+                            <td>{{$video.Account.Username}}</td>
+                            <td>
+                                <a href="/admin/sponsor_details?sponsor_id={{$video.Sponsor.Id}}">{{$video.Sponsor.Name}}</a>
+                            </td>
+                            <td>{{$video.PostedDate.Time.Format "2006-01-02"}}</td>
+                            <td>{{if $video.NeedsEntry}}Needs Entry{{end}}</td>
+                            <td>{{format $video.ViewCount.Int64}}</td>
+                            <td>{{format $video.LikeCount.Int64}}</td>
+                            <td>{{$video.Error.String}}</td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            {{end}}
+            {{/*        <fieldset>*/}}
+            <i>Showing {{.InnerData.FirstN}} to {{.InnerData.LastN}} of {{.InnerData.TotalN}}</i>
+            <br/>
+            <label>
+                Show
+                <input name="limit" placeholder="Limit" style="width: unset !important" value="100">
+                videos, starting at
+                <input name="offset" value="" placeholder="Offset" style="width: unset !important">
+            </label>
+
+            <button type="submit">New Search</button>
+            {{/*        </fieldset>*/}}
+        </div>
+    </form>
+{{end}}

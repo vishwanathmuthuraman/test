@@ -1,0 +1,7 @@
+{{define "with_menu"}}
+
+    <div style="display: grid; height: 100%; grid-template-columns: min-content 1fr; width: 100%">
+        {{template "menu" .}}
+        {{template "content" .}}
+    </div>
+{{end}}

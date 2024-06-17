@@ -1,0 +1,134 @@
+{{define "nav"}}
+    <ul>
+        <li>
+            <a href="/express_entry">
+                Express Video Entry (Link Only)
+            </a>
+        </li>
+        <li>
+
+            <a href="/upload_csv">
+                Bulk Video Entry (Full)
+            </a>
+        </li>
+    </ul>
+
+
+{{end}}
+
+{{define "content"}}
+{{/*    <script src="/csv.js"></script>*/}}
+    <script src="/csv_sync.js"></script>
+
+    <div style=" padding: 10px">
+        <h1>Bulk Video Entry</h1>
+        <p>
+            Enter videos from a CSV file. <b>This process will overwrite existing entries!</b> Videos will be entered sequentially from first to last row. The row number and status are reported below. Click the row number to view the video.
+        </p>
+
+        <form enctype="multipart/form-data" style="display:flex; gap: 10px; flex-direction: column;" id="upload_csv">
+            {{/*        <label for="video_url">Video URL</label>*/}}
+            Select file:
+            <input type="file" name="file" accept="text/csv">
+            <input type="submit" value="Submit" id="submit">
+        </form>
+        <div style="display:flex; align-items: center; gap: 5px">
+            <img src="/wheel.gif" style="display: none" id="spinner" width="25">
+            <div style="flex-shrink: 0"><b id="current"></b> / <b id="total"></b> </div>
+            <div id="progress-bar" style="width: 100%; height: 10px;"></div>
+
+        </div>
+        <div id="progress" style="font-family: monospace">
+        </div>
+    </div>
+    <script>
+        var rows = 0
+        var currentN = 0
+        document.querySelector("#submit").addEventListener("click", async function (event) {
+            event.preventDefault()
+            const file = document.querySelector("input[name=file]").files[0];
+            var loc = window.location, new_uri;
+            if (loc.protocol === "https:") {
+                new_uri = "wss:";
+            } else {
+                new_uri = "ws:";
+            }
+            new_uri += "//" + loc.host;
+            new_uri += "/admin/post_csv";
+            const socket = new WebSocket(new_uri);
+
+            socket.onopen = (event) => {
+                var reader = new FileReader();
+                var rawData = new ArrayBuffer();
+
+                reader.onload = function (e) {
+                    rawData = e.target.result;
+                    socket.send(rawData);
+                }
+
+                reader.readAsArrayBuffer(file);
+                document.querySelector("#upload_csv").style.display = "none"
+            }
+
+
+            socket.onmessage = (event) => {
+                console.log(event.data);
+                value = event.data
+                if (value) {
+                    let records = csv_sync.parse(value)
+                    console.log(records)
+                    if (records.length == 1)  {
+                        if (records[0].length == 1) {
+
+                            if (records[0][0] == "DONE") {
+                                document.querySelector("#spinner").style.display = "none"
+                            }
+
+                            var rx = /COUNT (.*)/g;
+                            var arr = rx.exec(records[0][0]);
+                            if (arr?.length == 2) {
+                                rows = arr[1]
+                                document.querySelector("#spinner").style.display = "block"
+                                document.querySelector("#current").innerText = 0
+                                document.querySelector("#total").innerText = rows
+                            }
+                            return
+                        }
+                    }
+                    for (record of records) {
+                        if (record.length >= 22) {
+                            // let element = document.createElement("div")
+                            let div = document.createElement("div")
+                            div.innerHTML = `<a href="${record[3]}" target="_blank">${record[20]}</a> &bullet; ${record[21]}`
+                            div.style.padding = "5px";
+                            div.style.backgroundColor = "rgba(255,0,0,0.3)";
+                            div.style.borderTop = "1px solid rgba(255,0,0,0.7)";
+                            div.style.borderBottom = "1px solid rgba(255,0,0,0.7)";
+                            document.querySelector("#progress").prepend(div)
+                            currentN++
+                            document.querySelector("#current").innerText = currentN
+                            document.querySelector("#progress-bar").style.background = `linear-gradient(90deg, rgba(0,0,255,0.8) 0%, rgba(0,82,255,0.8) ${Math.ceil(currentN/rows*100)}%, rgba(0,0,255,0) ${Math.ceil(currentN/rows)}%, rgba(255,255,255,0) 100%)`
+
+                        } else if (record.length >= 21) {
+                            // let element = document.createElement("div")
+                            let div = document.createElement("div")
+                            div.innerHTML = `<a href="${record[3]}" target="_blank">${record[20]}</a> &bullet; Successfully entered`
+                            div.style.padding = "5px";
+                            div.style.backgroundColor = "rgba(0,255,0,0.3)";
+                            div.style.borderTop = "1px solid rgba(0,255,0,0.7)";
+                            div.style.borderBottom = "1px solid rgba(0,255,0,0.7)";
+                            document.querySelector("#progress").prepend(div)
+                            currentN++
+                            document.querySelector("#current").innerText = currentN
+                            document.querySelector("#progress-bar").style.background = `linear-gradient(90deg, rgba(0,0,255,0.8) 0%, rgba(0,82,255,0.8) ${Math.ceil(currentN/rows*100)}%, rgba(0,0,255,0) ${Math.ceil(currentN/rows)}%, rgba(255,255,255,0) 100%)`
+                        }
+                    }
+
+                }
+            };
+
+
+
+        })
+    </script>
+{{end}}

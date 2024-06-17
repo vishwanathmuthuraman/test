@@ -1,0 +1,241 @@
+{{define "content"}}
+    <div class="{{if .InnerData.ShowMetrics}}videopage-admin{{else}}videopage-regular{{end}}">
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+            <h1>Video Details</h1>
+            <div style="display: flex; gap: 1rem">
+                <div>
+                    <div style="font-size: x-large; display: flex; align-items: center" >
+                        <span class="material-symbols-outlined" style="font-size: x-large">visibility</span>
+                        {{format .InnerData.ViewCount}}
+                    </div>
+                    Views
+                </div>
+                <div>
+                    <div style="font-size: x-large; display: flex; align-items: center" >
+                        <span class="material-symbols-outlined" style="font-size: x-large">favorite</span>
+                        {{format .InnerData.LikeCount}}
+                    </div>
+                    Likes
+                </div>
+                <div>
+                    <div style="font-size: x-large; display: flex; align-items: center" >
+                        <span class="material-symbols-outlined" style="font-size: x-large">chat_bubble</span>
+                        {{format .InnerData.CommentCount}}
+                    </div>
+                    Comments
+                </div>
+                <div>
+                    <div style="font-size: x-large; display: flex; align-items: center" >
+                        <span class="material-symbols-outlined" style="font-size: x-large">send</span>
+                        {{format .InnerData.ShareCount}}
+                    </div>
+                    Shares
+                </div>
+                <div>
+                    <div style="font-size: x-large; display: flex; align-items: center" >
+                        <span class="material-symbols-outlined" style="font-size: x-large">bookmark</span>
+                        {{format .InnerData.SaveCount}}
+                    </div>
+                    Saves
+                </div>
+            </div>
+
+            {{if .InnerData.NeedsEntry}}
+                <div style="background: rgba(255,220,0,0.3);display:flex;align-items: center; padding: 10px; border: 1px solid rgba(255,220,0,0.9); border-radius: 10px">
+                    <span class="material-symbols-outlined">warning</span> Details for this video have not been entered
+                    yet!
+                </div>
+            {{end}}
+
+
+            <form action="/update_video_details" method="post">
+
+                <table style="width: 100%">
+                    <tr>
+                        <td>Video ID</td>
+                        <td><input type="text" name="id" value="{{.InnerData.PresetId}}" readonly onclick='return false;'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>URL</td>
+                        <td><input type="text" name="url" value="{{.InnerData.PresetUrl}}" readonly onclick='return false;'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Story Link</td>
+                        <td><input type="text" name="story_link" value="{{.InnerData.PresetStoryLink}}"></td>
+                    </tr>
+                    <tr>
+                        <td>Story Code</td>
+                        <td><input type="text" name="story_code" value="{{.InnerData.PresetStoryCode}}"></td>
+                    </tr>
+                    <tr>
+                        <td>Writer</td>
+                        <td>
+                            <select name="writer_id">
+                                {{range .InnerData.Writers}}
+                                    <option value="{{.Id}}"
+                                            {{if eq .Id $.InnerData.PresetWriterId}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Writer Rate</td>
+                        <td><input required type="number" name="writer_rate" value="{{.InnerData.PresetWriterRate}}"></td>
+                    </tr>
+                    <tr>
+                        <td>Co-Writer</td>
+                        <td>
+                            <select name="co_writer_id">
+                                <option value="">No Co-Writer</option>
+                                {{range .InnerData.Writers}}
+                                    <option value="{{.Id}}"
+                                            {{if eq .Id $.InnerData.PresetCoWriterId}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Co-Writer Rate</td>
+                        <td><input type="number" name="co_writer_rate" value="{{.InnerData.PresetCoWriterRate}}"></td>
+                    </tr>
+                    <tr>
+                        <td>Audio</td>
+                        <td>
+                            <select name="audio_id">
+                                {{range .InnerData.Audios}}
+                                    <option value="{{.Id}}"
+                                            {{if eq .Id $.InnerData.PresetAudioId}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Voice</td>
+                        <td>
+                            <select name="voice">
+                                {{range .InnerData.Voices}}
+                                    <option value="{{.Id}}"
+                                            {{if eq .Id $.InnerData.PresetVoiceId}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Source</td>
+                        <td>
+                            <select name="source_id">
+                                {{range .InnerData.Sources}}
+                                    <option value="{{.Id}}"
+                                            {{if eq .Id $.InnerData.PresetSourceId}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sponsor</td>
+                        <td>
+                            <select name="sponsor_id">
+                                <option value="">No Sponsor</option>
+                                {{range .InnerData.Sponsors}}
+                                    <option value="{{.Id}}"
+                                            {{if eq .Id $.InnerData.PresetSponsorId}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sponsor Rate</td>
+                        <td><input type="number" name="sponsor_rate" value="{{.InnerData.PresetSponsorRate}}"></td>
+                    </tr>
+                    <tbody id="strategies">
+                    <tr>
+                        <td colspan="3">
+                            <center style="padding: 5px">Strategies</center>
+                        </td>
+                    </tr>
+                    {{range $k, $v := .InnerData.VarStrategyOptions}}
+                        <tr>
+                            <td>{{$k}}</td>
+                            <td>
+                                <select name="strategy">
+                                    <option value="">[None]</option>
+                                    {{range $v}}
+                                        <option value="{{.Name}}"
+                                                {{if $.InnerData.PresetStrategies.Contains (.)}}selected{{end}}
+                                        >{{.Name}}</option>
+                                    {{end}}
+                                </select>
+                            </td>
+                            <td>
+                                <button type="button" onclick="return this.parentNode.parentNode.remove();" class="remove">
+                                    X
+                                </button>
+
+                            </td>
+                        </tr>
+                    {{end}}
+                    <script>
+                        function showNewStrategyMenu() {
+                            document.getElementById("new_strategy").style.display = "table-row";
+                        }
+
+                        function addStrategy() {
+                            let strategyVar = document.getElementById("new_strategy_var").value;
+                            let strategyValue = document.getElementById("new_strategy_value").value;
+                            let strategies = document.getElementById("strategies");
+                            let newStrategy = document.createElement("tr");
+                            let newStrategyVar = document.createElement("td");
+                            let newStrategyValue = document.createElement("td");
+                            newStrategyVar.innerText = strategyVar;
+                            newStrategyValue.innerHTML = `<select  name="strategy" ><option value="${strategyVar}:${strategyValue}">${strategyValue}</select>`;
+                            newStrategy.appendChild(newStrategyVar);
+                            newStrategy.appendChild(newStrategyValue);
+                            newStrategy.innerHTML += (`
+                                                    <td><button type="button" onclick="return this.parentNode.parentNode.remove();" class="remove">X</button></td>
+
+                        `)
+                            strategies.appendChild(newStrategy);
+                            document.getElementById("new_strategy").style.display = "none";
+                        }
+
+                        function hideNewStrategy() {
+                            document.getElementById("new_strategy").style.display = "none";
+                        }
+                    </script>
+
+                    </tbody>
+                    <tr>
+                        <td colspan="3">
+                            <button type="button" onclick="showNewStrategyMenu()">Add Strategy</button>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr id="new_strategy" style="display: none;">
+                        <td><input type="text" id="new_strategy_var" placeholder="Variable"></td>
+                        <td><input type="text" id="new_strategy_value" placeholder="Value"></td>
+                        <td>
+                            <button type="button" onclick="addStrategy()" style="width: unset !important;">Add</button>
+                            <button type="button" onclick="hideNewStrategy()" style="width: unset !important;">Cancel
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <i>Please check that all information is correct before submitting</i>
+                <button type="submit">Update Video</button>
+                <br/>
+                <br/>
+                <h2>Script from TikTok</h2>
+                <textarea placeholder="No scraped script available" disabled style="width: 100%; min-height: 400px;">
+                {{.InnerData.ScrapedScript}}
+            </textarea>
+            </form>
+
+        </div>
+        {{if .InnerData.ShowMetrics}}
+            <iframe src="/grafana/d/sponsor-video-details?var-video_url={{.InnerData.PresetUrl}}"></iframe>
+        {{end}}
+    </div>
+{{end}}

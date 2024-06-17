@@ -1,0 +1,62 @@
+{{define "content"}}
+
+    <h1>Videos</h1>
+    <div style="display:flex; flex-direction: column">
+
+
+        <br/>
+        <iframe src="/grafana/d/sponsor-dash?var-sponsor_id={{.Id}}"></iframe>
+        <table style="text-align: left; width: 100%;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Platform</th>
+                <th>Account</th>
+                <th>Link</th>
+                {{/*            <th>Entered by VA</th>*/}}
+                {{/*            <th>Writer</th>*/}}
+                {{/*            <th>Source</th>*/}}
+                <th>Created Date</th>
+                <th>Views graph</th>
+                <th>Views</th>
+                <th>Cost</th>
+
+
+            </tr>
+            </thead>
+            {{range $video := .Videos}}
+                <tr>
+                    <td><a href="/admin/video_details?id={{$video.Id}}">[+ Details]</a></td>
+                    <td>to be added</td>
+                    <td>
+                        {{$video.Account.Platform}}
+                    </td>
+                    <td>
+                        {{$video.Account.Username}}
+                    </td>
+                    {{/*                <td>*/}}
+                    {{/*                    {{$video.Account.Username}}*/}}
+                    {{/*                </td>*/}}
+                    <td>
+                        <a href="{{$video.Url}}">Click to view</a>
+                    </td>
+
+                    <td>
+                        {{$video.Created.Format "Mon, 02 Jan 2006"}}
+                    </td>
+                    <td>
+                        <a href={{$video.Graph}}>Views Graph</a>
+                    </td>
+                    <td>
+                        {{$video.ViewCount}}
+                    </td>
+                    <td>
+                        ${{$video.Cost}}
+                    </td>
+                </tr>
+            {{end}}
+        </table>
+    </div>
+
+{{end}}

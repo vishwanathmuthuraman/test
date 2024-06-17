@@ -1,0 +1,261 @@
+{{define "content"}}
+    <style>
+
+        .hidden {
+            display: none;
+        }
+
+        .shown {
+            display: block;
+        }
+
+        html, body {
+            /*background: black;*/
+            /*color: greenyellow;*/
+        }
+
+        fieldset {
+            border-radius: 10px;
+            /*grid-area: 1 / 1 / 1 / 1;*/
+            font-size: small;
+        }
+
+        legend {
+            font-size: large;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        fieldset {
+            width: min(100%, 500px);
+
+        }
+
+    </style>
+    <h1>Edit Video</h1>
+
+    <form style="" method="POST" action="/va/edit_video_post">
+        <input hidden value="{{.Video.Id}}" name="id">
+        <fieldset disabled>
+            <legend>
+                Video Info
+            </legend>
+            <label>
+                <legend>
+                    URL
+
+                </legend>
+                <input disabled name="url" value="{{.Video.Url}}" required oninvalid="alert('Missing URL')">
+                <div id="preview">
+                </div>
+                <script async src='https://www.tiktok.com/embed.js'></script>
+
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                Voice
+
+            </legend>
+            <input type="text" list="voice_id" name="voice_id" value="{{.Video.VoiceId}}" placeholder="Select voice"
+                   required
+                   oninvalid="alert('invalid voice (enter a new voice name, or select an existing one from the dropdown')"/>
+            <datalist id="voice_id">
+                {{range $voice := .Voices}}
+                    <option value="{{$voice.Id}}">{{$voice.Name}} (ID: {{$voice.Id}})</option>
+                {{end}}
+            </datalist>
+
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                Audio
+
+            </legend>
+            <input type="text" list="audio_id" name="audio_id" value="{{.Video.AudioId}}" placeholder="Select audio"
+                   required
+                   oninvalid="alert('Missing audio (select one from the dropdown, or enter a custom audio name')"/>
+
+            <datalist id="audio_id">
+                {{range $audio := .Audios }}
+                    <option value="{{$audio.Id}}">{{$audio.Name}} (ID: {{$audio.Id}})</option>
+                {{end}}
+            </datalist>
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                Content Source
+
+            </legend>
+            <input type="text" list="source_id" name="source_id" value="{{.Video.SourceId}}" placeholder="Select source"
+                   required
+                   oninvalid="alert('Missing content source (select one from the dropdown, or enter a custom name')"/>
+
+            <datalist id="source_id">
+                {{range $source := .Sources }}
+                    <option value={{$source.Id}}>{{$source.Name}} (ID: {{$source.Id}})</option>
+                {{end}}
+            </datalist>
+        </fieldset>
+
+
+        <fieldset id="strategies_fieldset">
+            <legend>
+                Strategies
+
+            </legend>
+            {{$strats := .Video.Strategies}}
+            {{range $strategy := .Strategies }}
+                <label>
+                    <input name="strategy" value="{{$strategy.Id}}" type="checkbox" {{if $strats.Contains $strategy}}checked{{end}}>
+                    {{$strategy.Name}} (ID: {{$strategy.Id}})
+
+                </label>
+                <br/>
+            {{end}}
+            <br/>
+
+            <button onclick="
+                let inp = document.createElement('input')
+
+                inp.placeholder = 'New strategy name'
+                inp.name = 'strategy'
+                let del = document.createElement('button')
+                del.innerText = 'Delete'
+                del.type = 'button'
+
+                let group = document.createElement('div')
+                group.appendChild(inp)
+                group.appendChild(del)
+                                del.onclick = function() {
+                  group.remove()
+                }
+                document.getElementById('strategies_fieldset').appendChild(group)
+
+" type="button">Add new strategy
+            </button>
+        </fieldset>
+
+
+        <fieldset>
+            <legend>
+                Sponsorship
+            </legend>
+
+            <label>
+                Is this video sponsored?
+                <select name="is_sponsored">
+                    <option value="NO">No</option>
+                    <option value="YES">Yes</option>
+                </select>
+            </label>
+            <div id="sponsorship_details" class="hidden">
+                <label>
+                    Sponsor:
+                    <select name="sponsor_id">
+                        <option value="">None</option>
+                        {{range $sponsor := .Sponsors }}
+                            <option value="{{$sponsor.Id}}">{{$sponsor.Name}} (ID: {{$sponsor.Id}})</option>
+                        {{end}}
+                    </select>
+                </label>
+                <br/>
+                <label>
+                    Sponsor CPM
+                    <span>
+                            $<input type="number" name="sponsor_rate" value="{{.Video.SponsorRate}}">
+                        </span>
+                </label>
+{{/*                <fieldset>*/}}
+{{/*                    <legend>*/}}
+{{/*                        Account payment*/}}
+{{/*                    </legend>*/}}
+{{/*                    <label>*/}}
+{{/*                        <input type="radio" name="a_type" value="TCPM"*/}}
+{{/*                               style="width: unset" {{if eq .Video.AccountRateType "TCPM"}} checked {{end}}>*/}}
+{{/*                        CPM*/}}
+{{/*                    </label>*/}}
+{{/*                    <label>*/}}
+{{/*                        <input type="radio" name="a_type" value="ONCE"*/}}
+{{/*                               style="width: unset" {{if eq .Video.AccountRateType "TCPM"}} checked {{end}}>*/}}
+{{/*                        Fixed*/}}
+
+{{/*                    </label>*/}}
+{{/*                    <br/>*/}}
+{{/*                    <label>*/}}
+{{/*                        Amount $*/}}
+{{/*                        <input type="number" name="account_rate" value="{{.Video.AccountRate}}">*/}}
+{{/*                    </label>*/}}
+{{/*                </fieldset>*/}}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                Writer
+            </legend>
+            <label>
+                Writer:
+                <select name="writer_id" required oninvalid="alert('Missing writer (select one from the dropdown')">
+                    {{$vid := .Video}}
+                    {{range $writer := .Writers }}
+                        <option value="{{$writer.Id}}" {{if eq ($vid.WriterId) ($writer.Id) }} selected {{end}}>{{$writer.Name}}
+                            (ID: {{$writer.Id}})
+                        </option>
+                    {{end}}
+                </select>
+            </label>
+            <br/>
+            <label>
+                Writer CPM $
+                <input type="number" name="writer_rate" value="{{.Video.WriterRate}}" required
+                       oninvalid="alert('Missing writer CPM')">
+            </label>
+            <label>
+                Co-Writer:
+                <select name="co_writer_id" oninvalid="alert('Missing co-writer (select one from the dropdown')">
+                    {{range $writer := .Writers }}
+                        <option value="">None</option>
+
+                        <option value="{{$writer.Id}}" {{if eq ($vid.WriterId) ($writer.Id) }} selected {{end}}>{{$writer.Name}}
+                            (ID: {{$writer.Id}})
+                        </option>
+                    {{end}}
+                </select>
+            </label>
+            <br/>
+            <label>
+                Co-Writer CPM $
+                <input type="number" name="co_writer_rate" value="{{.Video.WriterRate}}"
+                       oninvalid="alert('Missing co-writer CPM')">
+            </label>
+        </fieldset>
+        <button type="submit">Submit</button>
+
+    </form>
+    <script>
+        document.querySelector("select[name=is_sponsored]").addEventListener("change", function (e) {
+            console.log("IN")
+            if (e.target.value == "YES") {
+                console.log("YES")
+                document.querySelector("#sponsorship_details").classList.add("shown")
+                document.querySelector("#sponsorship_details").classList.remove("hidden")
+
+            } else {
+                document.querySelector("#sponsorship_details").classList.add("hidden")
+                document.querySelector("#sponsorship_details").classList.remove("shown")
+
+            }
+        })
+    </script>
+{{end}}

@@ -1,0 +1,47 @@
+{{ define "base"}}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>JAA Media Marketing Portal</title>
+        <link rel="stylesheet" href="/stylesheet">
+        <style>
+
+            a {
+                /*background: rgb(17, 18, 23);*/
+                border: 2px solid var(--borders) !important;
+                padding: 10px !important;
+                border-radius: 10px;
+                /*color: white;*/
+                box-sizing: border-box;
+                width: 100%;
+                text-align: center;
+                text-decoration: none;
+            }
+
+
+            a:hover {
+                transform: scale(1.01);
+                transition: 200ms transform;
+                background: var(--secondary-bg);
+            }
+
+
+        </style>
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    </head>
+    <body>
+    <div class="card-wrapper">
+        <div class="card">
+            <img src="/logo" alt="JAA Media Marketing" style="width: 50%; padding: 20px;">
+            <a href="/sponsor/login?redirect={{.InnerData.Redirect}}">For Sponsors &rightarrow;</a>
+            {{/*      <a href="/employee/login?redirect={{.InnerData.Redirect}}">For Employees &rightarrow;</a>*/}}
+            <a href="/admin/login?redirect={{.InnerData.Redirect}}">For Admins &rightarrow;</a>
+            <a href="/va/login?redirect={{.InnerData.Redirect}}">For Data Entry Staff &rightarrow;</a>
+            <a href="/writer/login?redirect={{.InnerData.Redirect}}">For Writers &rightarrow;</a>
+        </div>
+    </div>
+    </body>
+    </html>
+{{end}}

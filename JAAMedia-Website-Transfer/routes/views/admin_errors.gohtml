@@ -1,0 +1,41 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        th, td {
+            border: 1px solid gray;
+        }
+    </style>
+    <h1>Tracking Errors</h1>
+        <i>The system was unable to track the following videos. If a video appears here, it is highly likely that it was taken down or restricted by TikTok. If that is not the case, please send a copy of this page to support.</i>
+        <table>
+            <thead>
+                <tr>
+                    <th>Video Link</th>
+                    <th>Error</th>
+                    <th>Last Seen</th>
+                    <th>Frequency</th>
+                </tr>
+            </thead>
+            {{range .InnerData.Errors}}
+                <tr>
+                    <td><a href="{{.Url}}">{{.Url}}</a></td>
+                    <td>{{.Message}}</td>
+                    <td>{{.LastSeen.Format "Mon, 02 Jan 2006 15:04:05 MST"}}</td>
+                    <td>{{.Frequency}}</td>
+                </tr>
+            {{end}}
+        </table>
+{{end}}

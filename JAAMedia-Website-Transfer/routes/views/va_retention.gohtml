@@ -1,0 +1,196 @@
+{{define "content"}}
+    <style>
+
+        .hidden {
+            display: none;
+        }
+
+        .shown {
+            display: block;
+        }
+
+        html, body {
+            /*background: black;*/
+            /*color: greenyellow;*/
+        }
+
+        fieldset {
+            border-radius: 10px;
+            /*grid-area: 1 / 1 / 1 / 1;*/
+            font-size: small;
+            box-sizing: border-box;
+            /*display: block;*/
+            /*display: contents;*/
+            /*max-width: 40vw;*/
+        }
+
+        legend {
+            font-size: large;
+        }
+
+        form {
+            /*width: 100%;*/
+            height: 100%;
+            padding-right: 10px;
+            gap: 10px;
+
+        }
+
+        #forms {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: min-content min-content 1fr;
+            gap: 10px;
+        }
+
+        @media screen and (max-width: 800px) {
+            #forms {
+                grid-template-columns: 1fr;
+                grid-template-rows: min-content min-content min-content;
+            }
+
+            #forms fieldset {
+                grid-row: unset !important;
+                grid-column: 1;
+                grid-area: unset !important;
+            }
+        }
+
+        input[type="radio"]:checked + label {
+            background: var(--secondary-bg);
+            /*color: white;*/
+
+        }
+
+        label {
+            /*white-space: normal;*/
+            /*max-width: 100%;*/
+            /*white-space:break-spaces;*/
+
+        }
+
+        /*input, select, button {*/
+        /*    width: unset !important;*/
+        /*}*/
+
+    </style>
+    <h1>Retention Data</h1>
+    <div id="forms">
+        <form method="GET" action="/retention" style="display: contents">
+            <fieldset style="grid-area: 1 / 1">
+                <legend>
+                    FAST Video Selection
+                </legend>
+                <i>OPTIONAL - Only use this if you know the exact video link!</i><br/>
+                <input type="url" name="manual_link" id="manual_link" value="{{.InnerData.ManualLinkPreset}}"
+                       placeholder="Video URL here (exactly as it was entered)" style="width: 100% !important;">
+                <button type="submit" style="width: 100% !important;">Find Video</button>
+
+            </fieldset>
+            <fieldset style="grid-area: 2 / 1" id="slow_selection">
+                <legend><b><u><i>OR</i></u></b>
+                    Search Videos
+                </legend>
+                <label>
+                    Filter by account (required):
+                    <select name="account_id">
+                        {{$accountPrefill := .InnerData.AccountPreset}}
+                        {{range $account := .InnerData.Accounts}}
+                            <option value="{{$account.Id}}"
+                                    {{if eq $account.Id $accountPrefill}}selected{{end}}>{{$account.Username}}</option>
+                        {{end}}
+                    </select>
+                </label>
+                <br/>
+                <label>
+                    Filter by date (required):
+                    <input type="date" name="date" value="{{.InnerData.DatePreset}}">
+
+                </label>
+                <br/>
+                <label>
+                    <input type="checkbox" name="sponsored" {{if .InnerData.SponsoredPreset}}checked{{end}}>
+                    Only show sponsored videos
+                </label>
+                <br/>
+                <button type="submit" style="width: 100% !important;">Refresh Videos</button>
+            </fieldset>
+
+        </form>
+        <form style="display: contents" method="POST" action="/post_retention_graph" enctype="multipart/form-data">
+            <fieldset style="grid-area: 3 / 1">
+                <legend>
+                    Select Video
+                </legend>
+                <i>Please use ctrl+f / cmd+f to find your video link faster:</i>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px">
+                    {{range $video := .InnerData.Videos}}
+                        <div>
+                            <input type="radio" style="width: unset" required name="video_id" value="{{$video.Id}}"/>
+                            <label for="video_id" style="word-break:break-all;">
+                                Select
+                                {{template "video_card" $video}}
+                            </label>
+                        </div>
+                    {{end}}
+                </div>
+
+            </fieldset>
+
+
+            <fieldset style="grid-column: 2; grid-row: 1 / span 3">
+                <legend>
+                    Upload Retention Graph
+                </legend>
+                <label>
+
+                    &#9432; <i><b>Example screenshot below:
+                            <br/>
+                            &bullet; Image must be PNG<br/>
+                            &bullet; Image should be high resolution for longer videos<br/>
+                            &bullet; Image should <u>NOT</u> show labels, timestamps, percentages etc.<br/>
+                            &bullet; Image must contain all 5 gray guidelines
+                        </b></i>
+                    <img src="/retention-demo" style="width: 100%">
+
+                    <input type="file" name="image" required accept="image/png">
+                </label>
+                <br/><br/>
+
+                {{/*            <label>*/}}
+                {{/*                Video Length:*/}}
+                {{/*                <input type="number" name="minutes" style="width: 100px" placeholder="minutes">:<input type="number"*/}}
+                {{/*                                                                                                       name="seconds"*/}}
+                {{/*                                                                                                       placeholder="seconds"*/}}
+                {{/*                                                                                                       style="width: 100px">*/}}
+
+                {{/*            </label>*/}}
+
+                <br/>
+
+                <br/>
+
+                <br/>
+
+                <button type="submit">Submit</button>
+
+            </fieldset>
+
+
+        </form>
+    </div>
+    <script>
+        if (document.getElementById("manual_link").value.length > 0) {
+            document.getElementById("slow_selection").classList.add("hidden")
+        } else {
+            document.getElementById("slow_selection").classList.remove("hidden")
+        }
+        document.getElementById("manual_link").addEventListener("input", function () {
+            if (this.value.length > 0) {
+                document.getElementById("slow_selection").classList.add("hidden")
+            } else {
+                document.getElementById("slow_selection").classList.remove("hidden")
+            }
+        })
+    </script>
+{{end}}

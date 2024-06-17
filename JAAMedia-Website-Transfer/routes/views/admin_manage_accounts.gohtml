@@ -1,0 +1,39 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 98vh;
+            border: none;
+        }
+    </style>
+    <h1>Dashboard</h1>
+    <div style="display:flex;flex-direction: column">
+        <iframe src="/grafana/d/admin-dash?orgId=1&from=now-7d&to=now&var-field=views"></iframe>
+{{/*        <table style="text-align: left; width: 100%;">*/}}
+{{/*            <thead>*/}}
+{{/*            <tr>*/}}
+{{/*                <th>Username</th>*/}}
+{{/*                <th>Platform</th>*/}}
+{{/*                <th>Breakdown</th>*/}}
+{{/*            </tr>*/}}
+{{/*            </thead>*/}}
+{{/*            {{range $account := .}}*/}}
+{{/*                <tr>*/}}
+{{/*                    <td>{{$account.InnerData.Username}}</td>*/}}
+{{/*                    <td>*/}}
+{{/*                        {{$account.InnerData.Platform}}*/}}
+{{/*                    </td>*/}}
+{{/*                    <td>*/}}
+{{/*                        <a href="/grafana/d/account?var-username={{$account.Username}}&var-platform={{$account.Platform}}">Statistics</a>*/}}
+{{/*                    </td>*/}}
+{{/*                </tr>*/}}
+{{/*            {{end}}*/}}
+{{/*        </table>*/}}
+
+    </div>
+
+{{end}}

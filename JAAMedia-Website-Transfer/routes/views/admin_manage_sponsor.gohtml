@@ -1,0 +1,57 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <h1>Sponsors</h1>
+    <button onclick="document.getElementById('create-sponsor').classList.toggle('hidden')">Create new sponsor</button>
+    <br/>
+    <div id="create-sponsor" class="hidden">
+        <form action="/admin/create_sponsor_post" method="POST">
+            <label>
+                Name
+                <input name="name">
+            </label>
+            <label>
+                Email
+                <input name="email">
+            </label>
+            <label>
+                Password
+                <input name="pw">
+            </label>
+            <button type="submit">Submit</button>
+            <button type="button" onclick="document.getElementById('create-sponsor').classList.toggle('hidden')">Cancel</button>
+        </form>
+    </div>
+    <br/>
+    <table style="text-align: left; width: 100%;">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Billing / Videos</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        {{range $sponsor := .InnerData.Sponsors}}
+            <tr>
+                <td>{{$sponsor.Name}}</td>
+                <td>
+                    <a href="mailto:{{$sponsor.Email}}">{{$sponsor.Email}}</a>
+                </td>
+                <td>
+                    <a href="/admin/sponsor_details?sponsor_id={{$sponsor.Id}}">
+                        View Report
+                    </a>
+                </td>
+                <td>
+                    <button onclick="let newPw = prompt('Enter a new password for {{$sponsor.Name}}');    if (newPw === null) {
+                            return; //break out of the function early
+                            } window.location = '/admin/change_sponsor_pw?pw='+newPw+'&id={{$sponsor.Id}}'">Change password</button>
+                </td>
+            </tr>
+        {{end}}
+    </table>
+{{end}}

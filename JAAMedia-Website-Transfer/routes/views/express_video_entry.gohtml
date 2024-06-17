@@ -1,0 +1,31 @@
+{{define "nav"}}
+    <ul>
+        <li>
+            <a href="/express_entry">
+                Express Video Entry (Link Only)
+            </a>
+        </li>
+        <li>
+
+            <a href="/upload_csv">
+                Bulk Video Entry (Full)
+            </a>
+        </li>
+    </ul>
+{{end}}
+
+{{define "content"}}
+    <div style=" padding: 10px">
+        <h1>Express Video Entry</h1>
+        <p>
+            Enter video links immediately after posting
+        </p>
+        <form action="/express_entry_post" method="post" style="display:flex; gap: 10px; flex-direction: column;">
+            {{/*        <label for="video_url">Video URL</label>*/}}
+            <input type="url" id="video_url" name="video_url" placeholder="Video URL">
+            <input type="text" id="password" name="password" placeholder="Password">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+{{end}}

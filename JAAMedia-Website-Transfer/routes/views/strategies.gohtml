@@ -1,0 +1,310 @@
+{{define "content"}}
+    <style>
+        /*input, select, option {*/
+        /*    width: unset !important;*/
+        /*}*/
+        th {
+            border: 1px solid var(--borders);
+        }
+
+        .td-50 {
+            background: rgba(0, 0, 255, 0.2);
+            font-weight: bold;
+        }
+
+        td {
+            font-family: monospace;
+        }
+
+        td:not(.td-50), th:not(.td-50) {
+            font-size: small;
+        }
+
+        .sort_btn {
+            text-decoration: underline;
+        }
+    </style>
+    <h1>Strategy Comparison / KPIs</h1>
+    <form style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-right: 10px;">
+        <fieldset style="display:flex;flex-direction: column; gap: 10px">
+            <legend>
+                Control
+            </legend>
+            {{/*            <label>*/}}
+            {{/*                Control by:*/}}
+            {{/*                <select name="control">*/}}
+            {{/*                    {{range .InnerData.ControlOptions}}*/}}
+            {{/*                        <option value="{{.Id}}">{{.Name}}</option>*/}}
+            {{/*                    {{end}}*/}}
+            {{/*                </select>*/}}
+            {{/*            </label>*/}}
+
+            {{/*            <br>*/}}
+            <label>
+                Account:
+                <select name="account_id">
+                    <option value="">[ALL]</option>
+                    {{$queryAccount := .InnerData.QueryAccount}}
+
+                    {{range $account := .InnerData.Accounts}}
+                        <option value="{{$account.Id}}"
+                                {{if eq $account.Id $queryAccount}}selected{{end}}> {{$account.Username}}
+                            / {{$account.Platform}} </option>
+                    {{end}}
+                </select>
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Sponsor:
+                <select name="sponsor_id">
+                    <option value="">[ALL]</option>
+                    {{$querySponsor := .InnerData.QuerySponsor}}
+                    {{range $sponsor := .InnerData.Sponsors}}
+                        <option value="{{$sponsor.Id}}"
+                                {{if eq $sponsor.Id $querySponsor}}selected{{end}}> {{$sponsor.Name}} </option>
+                    {{end}}
+                </select>
+
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Posted after:
+                <input type="date" name="date_after" value="{{.InnerData.QueryAfter}}">
+            </label>
+            {{/*            <br>*/}}
+            <label>
+                Posted before:
+                <input type="date" name="date_before" value="{{.InnerData.QueryBefore}}">
+            </label>
+            {{/*            <br>*/}}
+            <button type="submit" style="width: 100%">New Search</button>
+        </fieldset>
+
+        <div>
+            <h2>Strategy Comparison</h2>
+            <div>
+                <label>
+                    Limit to variable:
+                    <select name="variable" style="width: unset !important;">
+                        {{$qv := .InnerData.QueryVariable}}
+                        {{range $k, $v := .InnerData.Variables}}
+                            <option value="{{$k}}" {{if eq $k $qv}}selected{{end}}>{{$k}}</option>
+                        {{end}}
+                    </select>
+                </label>
+            </div>
+            <table style="width: 1fr; overflow-x: scroll">
+                <thead>
+                <tr>
+                    <th colspan="1">Variable</th>
+                    <th colspan="1">Value</th>
+                    {{/*                    <th colspan="1">Count</th>*/}}
+
+                    <th colspan="3"><a class="sort_btn" data-sort="views_total">
+                            Total Views
+                            {{if eq .InnerData.QuerySortBy "views_total"}}
+                                &blacktriangledown;
+                            {{else}}
+                                &triangledown;
+                            {{end}}
+                        </a>
+                    </th>
+                    <th colspan="3"><a class="sort_btn" data-sort="views_30m">View Growth last
+                            30m {{if eq .InnerData.QuerySortBy "views_30m"}}
+                                &blacktriangledown;
+                            {{else}}
+                                &triangledown;
+                            {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="views_1h">View Growth last
+                            1h{{if eq .InnerData.QuerySortBy "views_1h"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="views_6h">View Growth last
+                            6h{{if eq .InnerData.QuerySortBy "views_6h"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="views_12h">View Growth last
+                            12h{{if eq .InnerData.QuerySortBy "views_12h"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="views_24h">View Growth last
+                            24h{{if eq .InnerData.QuerySortBy "views_24h"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="retention_3">Retention
+                            3s{{if eq .InnerData.QuerySortBy "retention_3"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="retention_5">Retention 5s{{if eq .InnerData.QuerySortBy "retention_5"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                    <th colspan="3"><a class="sort_btn" data-sort="retention_10">Retention 10s{{if eq .InnerData.QuerySortBy "retention_10"}}
+                            &blacktriangledown;
+                        {{else}}
+                            &triangledown;
+                        {{end}}</a></th>
+                </tr>
+                <tr style="font-family: monospace">
+                    <th></th>
+                    <th></th>
+                    {{/*                                        <th></th>*/}}
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+
+                    <th>25%</th>
+                    <th class="td-50">50%</th>
+                    <th>75%</th>
+                </tr>
+
+                </thead>
+                <tbody>
+                {{range $strategy := .InnerData.Strategies}}
+                    <tr>
+                        <td>{{$strategy.Strategy.Variable}}</td>
+                        <td>{{$strategy.Strategy.Value}}</td>
+                        {{/*                        <td>{{$k.Name}}</td>*/}}
+                        {{/*                        <td>{{$strategy.Count}}</td>*/}}
+
+
+                        <td>{{$strategy.ViewsTotal.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.ViewsTotal.Percentile50}}</td>
+                        <td>{{$strategy.ViewsTotal.Percentile75}}</td>
+
+                        <td>{{$strategy.Views30m.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Views30m.Percentile50}}</td>
+                        <td>{{$strategy.Views30m.Percentile75}}</td>
+
+                        <td>{{$strategy.Views1h.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Views1h.Percentile50}}</td>
+                        <td>{{$strategy.Views1h.Percentile75}}</td>
+
+                        <td>{{$strategy.Views6h.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Views6h.Percentile50}}</td>
+                        <td>{{$strategy.Views6h.Percentile75}}</td>
+
+                        <td>{{$strategy.Views12h.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Views12h.Percentile50}}</td>
+                        <td>{{$strategy.Views12h.Percentile75}}</td>
+
+                        <td>{{$strategy.Views24h.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Views24h.Percentile50}}</td>
+                        <td>{{$strategy.Views24h.Percentile75}}</td>
+
+                        <td>{{$strategy.Retention3.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Retention3.Percentile50}}</td>
+                        <td>{{$strategy.Retention3.Percentile75}}</td>
+
+                        <td>{{$strategy.Retention5.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Retention5.Percentile50}}</td>
+                        <td>{{$strategy.Retention5.Percentile75}}</td>
+
+                        <td>{{$strategy.Retention10.Percentile25}}</td>
+                        <td class="td-50">{{$strategy.Retention10.Percentile50}}</td>
+                        <td>{{$strategy.Retention10.Percentile75}}</td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+            <script>
+                    let sort_btns = document.getElementsByClassName("sort_btn");
+                    for (let i = 0; i < sort_btns.length; i++) {
+                        sort_btns[i].addEventListener("click", function (e) {
+                            let sort_by = e.target.dataset.sort;
+                            let url = new URL(window.location.href);
+                            url.searchParams.set("sort_by", sort_by);
+                            window.location.href = url.toString();
+                        });
+                    }
+            </script>
+            {{/*            <h2>Individual Videos</h2>*/}}
+            {{/*            <table style="width: 1fr; overflow-x: scroll">*/}}
+            {{/*                <thead>*/}}
+            {{/*                <tr>*/}}
+            {{/*                    <th>Details</th>*/}}
+            {{/*                    <th style="resize: both; overflow: auto; display: block">URL</th>*/}}
+            {{/*                    <th>Account</th>*/}}
+            {{/*                    <th>Sponsor</th>*/}}
+            {{/*                    <th>Posted</th>*/}}
+            {{/*                    <th>Retention 3s</th>*/}}
+            {{/*                    <th>Retention 5s</th>*/}}
+            {{/*                    <th>Retention 10s</th>*/}}
+            {{/*                    <th>Total Views</th>*/}}
+            {{/*                    <th>View Growth last 30m</th>*/}}
+            {{/*                    <th>View Growth last 1h</th>*/}}
+            {{/*                    <th>View Growth last 6h</th>*/}}
+            {{/*                    <th>View Growth last 12h</th>*/}}
+            {{/*                    <th>View Growth last 24h</th>*/}}
+            {{/*                </tr>*/}}
+            {{/*                </thead>*/}}
+            {{/*                <tbody>*/}}
+            {{/*                {{range $video := .InnerData.Videos}}*/}}
+            {{/*                    <tr>*/}}
+            {{/*                        <td><a href="/grafana/d/sponsor-video-details?var-video_url={{$video.Url}}" class="button">View*/}}
+            {{/*                                Details</a></td>*/}}
+            {{/*                        <td><a href="{{$video.Url}}">{{$video.Url}}</a></td>*/}}
+            {{/*                        <td>{{$video.Account.Username}}</td>*/}}
+            {{/*                        <td>*/}}
+            {{/*                            <a href="/admin/sponsor_details?sponsor_id={{$video.Sponsor.Id}}">{{$video.Sponsor.Name}}</a>*/}}
+            {{/*                        </td>*/}}
+            {{/*                        <td>{{$video.PostedDate.Value.Format "2006-01-02 15:04:05"}}</td>*/}}
+            {{/*                    </tr>*/}}
+            {{/*                {{end}}*/}}
+            {{/*                </tbody>*/}}
+            {{/*            </table>*/}}
+
+            {{/*        <fieldset>*/}}
+            {{/*            <i>Showing {{.InnerData.FirstN}} to {{.InnerData.LastN}} of {{.InnerData.TotalN}}</i>*/}}
+            {{/*            <br/>*/}}
+            {{/*            <label>*/}}
+            {{/*                Show*/}}
+            {{/*                <input name="limit" placeholder="Limit" style="width: unset !important" value="100">*/}}
+            {{/*                videos, starting at*/}}
+            {{/*                <input name="offset" value="" placeholder="Offset" style="width: unset !important">*/}}
+            {{/*            </label>*/}}
+
+            {{/*            <button type="submit">New Search</button>*/}}
+            {{/*        </fieldset>*/}}
+        </div>
+    </form>
+{{end}}

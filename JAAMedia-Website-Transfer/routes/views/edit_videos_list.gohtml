@@ -1,0 +1,73 @@
+{{define "content"}}
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <h1>Edit My Videos</h1>
+    {{/*    <button onclick="document.getElementById('create-va').classList.toggle('hidden')">Create new VA</button>*/}}
+    <br/>
+    {{/*    <div id="create-va" class="hidden">*/}}
+    {{/*        <form action="/admin/create_va_post" method="POST">*/}}
+    {{/*            <label>*/}}
+    {{/*                Name*/}}
+    {{/*                <input name="name">*/}}
+    {{/*            </label>*/}}
+    {{/*            <label>*/}}
+    {{/*                Email*/}}
+    {{/*                <input name="email">*/}}
+    {{/*            </label>*/}}
+    {{/*            <label>*/}}
+    {{/*                Password*/}}
+    {{/*                <input name="pw">*/}}
+    {{/*            </label>*/}}
+    {{/*            <button type="submit">Submit</button>*/}}
+    {{/*            <button type="button" onclick="document.getElementById('create-va').classList.toggle('hidden')">Cancel</button>*/}}
+    {{/*        </form>*/}}
+    {{/*    </div>*/}}
+    <br/>
+    <table style="text-align: left; width: 100%;">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Title</th>
+            <th>Platform</th>
+            <th>Account</th>
+            <th>Link</th>
+            {{/*            <th>Entered by VA</th>*/}}
+            {{/*            <th>Writer</th>*/}}
+            {{/*            <th>Source</th>*/}}
+            {{/*            <th>Created Date</th>*/}}
+
+        </tr>
+        </thead>
+        {{range $video := .}}
+            <tr>
+                <td><a href="/va/edit_video?id={{$video.Id}}">[+ Edit]</a></td>
+                <td>to be added</td>
+                <td>
+                    {{$video.Account.Platform}}
+                </td>
+                <td>
+                    {{$video.Account.Username}}
+                </td>
+                <td>
+                    <a href="{{$video.Url}}">Click to view</a>
+                </td>
+                {{/*                <td>*/}}
+                {{/*                    <a href="/admin/manage_va">{{$video.Va.Name}}</a>*/}}
+                {{/*                </td>*/}}
+                {{/*                <td>*/}}
+                {{/*                    {{$video.Writer.Name}}*/}}
+                {{/*                </td>*/}}
+                {{/*                <td>*/}}
+                {{/*                    {{$video.Source.Name}}*/}}
+                {{/*                </td>*/}}
+                {{/*                <td>*/}}
+                {{/*                    {{$video.Created.Format "Mon, 02 Jan 2006 15:04:05 MST"}}*/}}
+                {{/*                </td>*/}}
+
+            </tr>
+        {{end}}
+    </table>
+{{end}}
